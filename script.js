@@ -1,20 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-  const pokelistElm = document.querySelector(".allanimals")
+  const animallistElm = document.querySelector(".allanimals")
   const pokefooter = document.querySelector(".navigation")
 
-  if (pokelistElm) {
+  if (animallistElm) {
 
     let url = new URLSearchParams(window.location.search)
-
-    /*let offset;
-    if (url.get("offset")) {
-        offset = url.get("offset")
-    } else {
-        offset = 0
-    }*/
-
     let offset = url.get("offset") ? url.get("offset") : 0;
-    console.log(typeof (offset))
     let nextOffset;
     let prevOffset;
 
@@ -40,12 +31,12 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="li_box">
           <p>${animal.name}</p>
           <p>${animal.type}</p>
-          <a class="atext" href="singleanimal.html?animalId=${animal._id}">Se detaljer</a>
-          <a class="atext" href>Opdater</a>
-          <button class="dltBtn">Slet</button>
+          <a class="atext" href="singleanimal.html?animalId=${animal._id}">See Details</a>
+          <a class="atext" href="update.html?update=${animal._id}">Opdate animale</a>
+          <button class="dltBtn" data-id=${animal._id}>Delete</button>
           </div>
               `
-          pokelistElm.appendChild(li)
+          animallistElm.appendChild(li)
         })
 
 
@@ -67,5 +58,36 @@ document.addEventListener("DOMContentLoaded", function () {
         pokefooter.appendChild(next)
       })
 
+      //DELETE FUNCTION
+      .then(function () {
+        let deletebtns = document.querySelectorAll(".dltBtn")
+        console.log(deletebtns)
+
+        function deleteanimal(e) {
+          console.log(e.target.dataset.id)
+          let animalId = e.target.dataset.id
+
+
+          fetch(`http://kirastella-myapi.herokuapp.com/api/v1/animals/${animalId}`, {
+            "method": "DELETE",
+            "headers": {
+              "Authorization": "Bearer ujheidwu84bo893hpnfuwiosyfjks9ey"
+            }
+          })
+
+            .then(function () {
+              window.location.reload()
+            })
+            .catch(err => console.error(err));
+        }
+        deletebtns.forEach(deletebtn => {
+          deletebtn.addEventListener("click", deleteanimal)
+        });
+
+      })
+
+
   }
+  
+
 })
